@@ -4,10 +4,10 @@ import Category from '../models/Category';
 import Transaction from '../models/Transaction';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 
-interface RequestDTO {
+interface Request {
   title: string;
-  value: number;
   type: 'income' | 'outcome';
+  value: number;
   category: string;
 }
 
@@ -17,47 +17,39 @@ class CreateTransactionService {
     value,
     type,
     category,
-  }: RequestDTO): Promise<Transaction> {
+  }: Request): Promise<Transaction> {
     const transactionsRepository = getCustomRepository(TransactionsRepository);
-
     const categoryRepository = getRepository(Category);
 
-    const { total: totalBalance } = await transactionsRepository.getBalance();
+    const { total } = await transactionsRepository.getBalance();
 
-    if (type === 'outcome' && value >= totalBalance) {
-      throw new AppError({
-        statusCode: 400,
-        message: 'O valor de retirada está acima do saldo total!',
-      });
+    if (type === 'outcome' && total < value) {
+      throw new AppError(' You do not have enough balance');
     }
-
-    const categoryExists = await categoryRepository.findOne({
-      where: { title: category },
+    let transactionCategory = await categoryRepository.findOne({
+      where: {
+        title: category,
+      },
     });
 
-    let category_id;
-
-    if (!categoryExists) {
-      const categoryObj = categoryRepository.create({
+    if (!transactionCategory) {
+      transactionCategory = categoryRepository.create({
         title: category,
       });
 
-      const categoryRef = await categoryRepository.save(categoryObj);
-
-      category_id = categoryRef.id;
-    } else {
-      category_id = categoryExists.id;
+      await categoryRepository.save(transactionCategory);
     }
 
-    const transactionObj = transactionsRepository.create({
+    const transaction = transactionsRepository.create({
       title,
       value,
       type,
-      category_id,
+      category: transactionCategory,
     });
 
-    await transactionsRepository.save(transactionObj);
-    return transactionObj;
+    await transactionsRepository.save(transaction);
+
+    return transaction;
   }
 }
 

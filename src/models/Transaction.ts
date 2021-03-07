@@ -1,12 +1,10 @@
-import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import Category from './Category';
 
@@ -24,19 +22,17 @@ class Transaction {
   @Column()
   value: number;
 
-  @Column()
-  category_id: string;
-
-  @ManyToOne(() => Category, category => category.transaction, {
-    eager: true,
-  })
+  @ManyToOne(() => Category, category => category.transaction, { eager: true })
   @JoinColumn({ name: 'category_id' })
   category: Category;
+
+  @Column()
+  category_id: string;
 
   @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn()
+  @CreateDateColumn()
   updated_at: Date;
 }
 

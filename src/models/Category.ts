@@ -18,7 +18,7 @@ class Category {
   @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn()
+  @CreateDateColumn()
   updated_at: Date;
 
   @OneToMany(() => Transaction, transaction => transaction.category)

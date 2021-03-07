@@ -3,21 +3,16 @@ import AppError from '../errors/AppError';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 
 class DeleteTransactionService {
-  public async execute(transactin_id: string): Promise<void> {
+  public async execute(id: string): Promise<void> {
     const transactionsRepository = getCustomRepository(TransactionsRepository);
 
-    const transactionResponse = await transactionsRepository.findOne(
-      transactin_id,
-    );
+    const transaction = await transactionsRepository.findOne(id);
 
-    if (!transactionResponse) {
-      throw new AppError({
-        statusCode: 404,
-        message: 'This transaction does not exist!',
-      });
+    if (!transaction) {
+      throw new AppError('Transaction does not exists!');
     }
 
-    await transactionsRepository.delete(transactin_id);
+    await transactionsRepository.remove(transaction);
   }
 }
 

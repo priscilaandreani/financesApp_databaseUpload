@@ -9,7 +9,7 @@ export default class CreateTransactions1598716617797
         columns: [
           {
             name: 'id',
-            type: 'uuid',
+            type: 'uuid ',
             isPrimary: true,
             generationStrategy: 'uuid',
             default: 'uuid_generate_v4()',
@@ -19,16 +19,14 @@ export default class CreateTransactions1598716617797
             type: 'varchar',
           },
           {
-            name: 'value',
-            type: 'decimal',
-          },
-          {
             name: 'type',
             type: 'varchar',
           },
           {
-            name: 'category',
-            type: 'varchar',
+            name: 'value',
+            type: 'decimal',
+            precision: 10,
+            scale: 2,
           },
           {
             name: 'created_at',

@@ -11,7 +11,6 @@ class DeleteTransactionService {
     if (!transaction) {
       throw new AppError('Transaction does not exists!');
     }
-
     await transactionsRepository.remove(transaction);
   }
 }
